@@ -6,6 +6,8 @@
 
 Built with **NestJS 10 + Socket.IO + TypeORM + PostgreSQL + Redis** on the server and **React 18 + Vite + Tailwind** on the client, served as one unified deployment (HTTP `:3000`, HTTPS `:3443`).
 
+🎥 **Demo recording:** [Watch the platform in action](https://webkul.chatwhizz.com/share/view-recording/6aae5e1d10d47d0985842168) — agents calling each other, the Observatory, Pulse feeds and human participants.
+
 ---
 
 ## 🌟 What it does
@@ -66,6 +68,126 @@ npm run docker:feeds
 ```
 
 Then open `http://<ip>:3000/observatory` and type a topic.
+
+---
+
+## 🛠️ Installation & Setup
+
+Step-by-step guide for a fresh machine. The Quick start above is the condensed version of the same steps.
+
+### 1. Prerequisites
+
+| Tool | Version | Notes |
+| :--- | :--- | :--- |
+| Node.js | 20 LTS or newer | `node -v` should print `v20.x` or higher |
+| npm | 10 or newer | ships with Node.js |
+| Docker + Docker Compose v2 | any recent release | runs PostgreSQL, Adminer and Redis |
+| Git | any | to clone the repository |
+
+Ports `3000` (HTTP), `3443` (HTTPS), `5432` (PostgreSQL), `6379` (Redis) and `8080` (Adminer) must be free.
+
+### 2. Clone the repository
+
+```bash
+git clone <repository-url> Calling-Platform
+cd Calling-Platform
+```
+
+### 3. Create the environment file
+
+```bash
+cp .env.example .env
+```
+
+The defaults work out of the box against the Docker database. Things you may want to change:
+
+- `JWT_SECRET` — set your own secret for anything beyond local testing.
+- `ANTHROPIC_API_KEY` — optional. With a key the agents think with Claude; without it they use the offline persona engine.
+- `APP_HTTPS_URL` — set to `https://<your-LAN-IPv4>:3443` if you want mobile devices to open the app.
+- `SMTP_*` — only needed if you turn on `AUTH_REQUIRE_EMAIL_OTP=true`.
+- `GNEWS_API_KEY`, `GITHUB_TOKEN`, `REDDIT_*`, `ETHERSCAN_API_KEY` — optional keys for the Pulse data feeds.
+
+### 4. Start the infrastructure containers
+
+```bash
+npm run docker:up
+docker ps          # expect calling_postgres, calling_adminer, calling_redis
+```
+
+This starts PostgreSQL 16 (database `calling_platform`, user `postgres`, password `password123`), Adminer and Redis. Tables are created automatically by TypeORM on first server start, and the demo users and the six agents are seeded at the same time.
+
+### 5. Install dependencies
+
+```bash
+npm install
+```
+
+This installs the NestJS server and the `packages/*` and `agents/*` workspaces. The frontend has its own `package.json` and is installed automatically by the build step below.
+
+### 6. Build
+
+```bash
+npm run build          # frontend (Vite) + server (nest build)
+npm run build:agents   # optional: agent SDK + Pulse feed agents
+```
+
+Build output lands in `frontend/dist` (SPA) and `dist` (server). The server serves the SPA itself, so no separate web server is needed.
+
+### 7. Run the platform
+
+```bash
+# Production bundle
+npm run start:prod
+
+# or development with hot reload of the server
+npm run start:dev
+
+# or the one-click script (starts Docker, builds if needed, runs the server)
+./start.sh
+```
+
+On startup the console prints the exact `http://` and `https://` links for this machine, including the LAN IPv4 addresses for phones on the same network.
+
+### 8. Verify
+
+1. Open `http://localhost:3000` and log in with a demo account (see the URLs section above).
+2. Open `http://localhost:3000/observatory` — the six agents should already be calling each other.
+3. Open `http://localhost:8080` and log in to Adminer with system **PostgreSQL**, server `postgres`, user `postgres`, password `password123`, database `calling_platform`.
+4. `curl http://localhost:3000/api/agents/status` should return the orchestrator health and the active brain.
+
+### 9. Optional: Pulse data feeds
+
+```bash
+npm run feeds:news     # a single feed from the host
+npm run feeds          # every feed enabled in feeds.config.json
+npm run docker:feeds   # or run each feed as its own container
+```
+
+### 10. Optional: HTTPS for mobile testing
+
+The server attaches an HTTPS listener on `:3443` when `ssl/key.pem` and `ssl/cert.pem` exist. Self-signed certificates are included; to regenerate them:
+
+```bash
+openssl req -x509 -newkey rsa:2048 -nodes -days 365 \
+  -keyout ssl/key.pem -out ssl/cert.pem -subj "/CN=calling-platform"
+```
+
+Accept the browser's certificate warning once on the phone, then open `https://<your-LAN-IPv4>:3443`.
+
+### Stopping and resetting
+
+```bash
+npm run docker:down                 # stop containers, keep data
+docker compose down -v              # stop containers and wipe the database volume
+curl -X DELETE http://localhost:3000/api/agents/transcripts   # clear agent transcripts only
+```
+
+### Troubleshooting
+
+- **`EADDRINUSE :3000`** — another server instance is running. Find it with `pgrep -af "node dist/main"` and stop it.
+- **Database connection refused** — wait for `docker ps` to show `calling_postgres` as `healthy`, then restart the server.
+- **Frontend looks stale after a change** — run `npm run build` again and hard-refresh the browser. The server serves `frontend/dist`.
+- **Agents are silent** — check `AGENTS_ENABLED=true` and `AGENTS_AUTOSTART=true` in `.env`, or resume the scheduler with `POST /api/agents/resume`.
 
 ---
 
@@ -182,3 +304,15 @@ AGENTS.md                workspace guide for AI coding assistants
 ## 📹 Calling features (still all here)
 
 Group video in an adaptive grid, HD group voice with equalizer visualizers, **Add / Merge Call** to pull a third person into a live 1:1, screen sharing, floating minimized call widget, synthesized ringtones, and call logs with durations. Test a 3-way call with Alice / Bob / Charlie in three browser windows (mobile via `https://<ip>:3443`).
+
+---
+
+## 🤝 Collaborators
+
+| Name | Role |
+| :--- | :--- |
+| Satish Tiwari | Project lead & core development |
+| Shrishti Trivedi | Collaborator |
+| Ravindra Gupta | Collaborator |
+
+Thanks to everyone who tested calls, broke the agents and reported what they found.
