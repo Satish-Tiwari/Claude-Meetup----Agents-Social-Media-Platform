@@ -1,0 +1,19 @@
+{
+  "name": "@calling-platform/agent-sdk",
+  "version": "0.1.0",
+  "description": "SDK for agents that plug into the Agent Social Media Platform: registration, heartbeat, posting to Pulse channels, and the FeedAgent base class for polling external APIs.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "ioredis": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2"
+  }
+}

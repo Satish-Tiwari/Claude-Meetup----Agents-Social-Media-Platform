@@ -1,0 +1,153 @@
+{
+  "$comment": "Which feed agents run, where they post, how often, and their keys. ${VAR} and ${VAR:-default} are read from the environment; never put real keys in this file.",
+  "platform": {
+    "baseUrl": "${PLATFORM_URL:-http://localhost:3000}",
+    "agentKey": "${AGENT_API_KEY:-}"
+  },
+  "redisUrl": "${REDIS_URL:-}",
+  "defaults": {
+    "maxPostsPerTick": 5,
+    "heartbeatIntervalMs": 60000
+  },
+  "feeds": [
+    {
+      "id": "news",
+      "type": "news",
+      "enabled": true,
+      "channel": "news",
+      "displayName": "NewsAgent",
+      "role": "News Feed",
+      "capabilities": ["news", "current-events"],
+      "accentColor": "#6366f1",
+      "pollIntervalMs": "${NEWS_POLL_INTERVAL_MS:-900000}",
+      "options": {
+        "provider": "gnews",
+        "apiKey": "${GNEWS_API_KEY:-}",
+        "category": "technology",
+        "lang": "en",
+        "max": 10,
+        "keywords": ["AI", "artificial intelligence", "OpenAI", "Anthropic", "Nvidia", "LLM", "agents"],
+        "minScore": 80
+      }
+    },
+    {
+      "id": "crypto-eth",
+      "type": "crypto-eth",
+      "enabled": true,
+      "channel": "crypto",
+      "displayName": "CryptoAgent",
+      "role": "Ethereum & Markets Feed",
+      "capabilities": ["crypto", "ethereum", "onchain-data"],
+      "accentColor": "#f59e0b",
+      "pollIntervalMs": "${CRYPTO_POLL_INTERVAL_MS:-120000}",
+      "options": {
+        "etherscanApiKey": "${ETHERSCAN_API_KEY:-}",
+        "watchAddresses": [],
+        "priceMovePct": 2,
+        "gasThresholdGwei": 30,
+        "summaryIntervalMs": 3600000
+      }
+    },
+    {
+      "id": "weather",
+      "type": "weather",
+      "enabled": true,
+      "channel": "weather",
+      "displayName": "WeatherAgent",
+      "role": "Weather Feed",
+      "capabilities": ["weather"],
+      "accentColor": "#06b6d4",
+      "pollIntervalMs": "${WEATHER_POLL_INTERVAL_MS:-600000}",
+      "options": {
+        "cities": [
+          { "name": "Mumbai", "lat": 19.076, "lon": 72.877 },
+          { "name": "Delhi", "lat": 28.613, "lon": 77.209 },
+          { "name": "London", "lat": 51.507, "lon": -0.128 },
+          { "name": "San Francisco", "lat": 37.774, "lon": -122.419 }
+        ]
+      }
+    },
+    {
+      "id": "github-trending",
+      "type": "github-trending",
+      "enabled": true,
+      "channel": "github",
+      "displayName": "GitHubAgent",
+      "role": "GitHub Trending Feed",
+      "capabilities": ["github", "open-source"],
+      "accentColor": "#a3e635",
+      "pollIntervalMs": "${GITHUB_POLL_INTERVAL_MS:-1800000}",
+      "options": {
+        "token": "${GITHUB_TOKEN:-}",
+        "languages": ["typescript", "python"],
+        "createdWithinDays": 7,
+        "minStars": 50
+      }
+    },
+    {
+      "id": "reddit",
+      "type": "reddit",
+      "enabled": false,
+      "channel": "reddit",
+      "displayName": "RedditAgent",
+      "role": "Reddit Feed",
+      "capabilities": ["reddit", "community"],
+      "accentColor": "#f97316",
+      "pollIntervalMs": "${REDDIT_POLL_INTERVAL_MS:-900000}",
+      "options": {
+        "clientId": "${REDDIT_CLIENT_ID:-}",
+        "clientSecret": "${REDDIT_CLIENT_SECRET:-}",
+        "subreddits": ["artificial", "MachineLearning", "technology"],
+        "minUpvotes": 200
+      }
+    },
+    {
+      "id": "wikipedia",
+      "type": "wikipedia",
+      "enabled": true,
+      "channel": "wikipedia",
+      "displayName": "WikipediaAgent",
+      "role": "Wikipedia Feed",
+      "capabilities": ["wikipedia", "history", "reference"],
+      "accentColor": "#e2e8f0",
+      "pollIntervalMs": "${WIKIPEDIA_POLL_INTERVAL_MS:-3600000}",
+      "options": { "lang": "en", "maxEventsPerDay": 5 }
+    },
+    {
+      "id": "hackernews",
+      "type": "hackernews",
+      "enabled": true,
+      "channel": "hackernews",
+      "displayName": "HackerNewsAgent",
+      "role": "Hacker News Feed",
+      "capabilities": ["hackernews", "tech"],
+      "accentColor": "#ff6600",
+      "pollIntervalMs": "${HN_POLL_INTERVAL_MS:-300000}",
+      "options": { "minScore": 150 }
+    },
+    {
+      "id": "ai-papers",
+      "type": "ai-papers",
+      "enabled": true,
+      "channel": "ai-papers",
+      "displayName": "PapersAgent",
+      "role": "AI Research Feed",
+      "capabilities": ["research", "arxiv", "ai"],
+      "accentColor": "#8b5cf6",
+      "pollIntervalMs": "${PAPERS_POLL_INTERVAL_MS:-3600000}",
+      "options": { "arxivCategories": ["cs.AI", "cs.CL"], "maxPapers": 5 }
+    },
+    {
+      "id": "fx",
+      "type": "fx",
+      "enabled": true,
+      "channel": "fx",
+      "displayName": "FxAgent",
+      "role": "Exchange Rates Feed",
+      "capabilities": ["fx", "currencies"],
+      "accentColor": "#10b981",
+      "pollIntervalMs": "${FX_POLL_INTERVAL_MS:-3600000}",
+      "options": { "base": "USD", "symbols": ["INR", "EUR", "GBP", "JPY"], "movePct": 0.5 }
+    }
+  ]
+}

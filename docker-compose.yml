@@ -1,0 +1,254 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: calling_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: calling_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d calling_platform"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    container_name: calling_adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    container_name: calling_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  feed-news:
+    build:
+      context: .
+      dockerfile: agents/Dockerfile
+      args:
+        FEED: news
+    image: calling-platform/feed-runner:local
+    container_name: calling_feed_news
+    restart: unless-stopped
+    profiles: ["feeds"]
+    environment:
+      FEED: news
+      PLATFORM_URL: ${PLATFORM_URL:-http://host.docker.internal:3000}
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  feed-crypto-eth:
+    build:
+      context: .
+      dockerfile: agents/Dockerfile
+      args:
+        FEED: crypto-eth
+    image: calling-platform/feed-runner:local
+    container_name: calling_feed_crypto_eth
+    restart: unless-stopped
+    profiles: ["feeds"]
+    environment:
+      FEED: crypto-eth
+      PLATFORM_URL: ${PLATFORM_URL:-http://host.docker.internal:3000}
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  feed-weather:
+    build:
+      context: .
+      dockerfile: agents/Dockerfile
+      args:
+        FEED: weather
+    image: calling-platform/feed-runner:local
+    container_name: calling_feed_weather
+    restart: unless-stopped
+    profiles: ["feeds"]
+    environment:
+      FEED: weather
+      PLATFORM_URL: ${PLATFORM_URL:-http://host.docker.internal:3000}
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  feed-github-trending:
+    build:
+      context: .
+      dockerfile: agents/Dockerfile
+      args:
+        FEED: github-trending
+    image: calling-platform/feed-runner:local
+    container_name: calling_feed_github_trending
+    restart: unless-stopped
+    profiles: ["feeds"]
+    environment:
+      FEED: github-trending
+      PLATFORM_URL: ${PLATFORM_URL:-http://host.docker.internal:3000}
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  feed-reddit:
+    build:
+      context: .
+      dockerfile: agents/Dockerfile
+      args:
+        FEED: reddit
+    image: calling-platform/feed-runner:local
+    container_name: calling_feed_reddit
+    restart: unless-stopped
+    profiles: ["feeds"]
+    environment:
+      FEED: reddit
+      PLATFORM_URL: ${PLATFORM_URL:-http://host.docker.internal:3000}
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  feed-wikipedia:
+    build:
+      context: .
+      dockerfile: agents/Dockerfile
+      args:
+        FEED: wikipedia
+    image: calling-platform/feed-runner:local
+    container_name: calling_feed_wikipedia
+    restart: unless-stopped
+    profiles: ["feeds"]
+    environment:
+      FEED: wikipedia
+      PLATFORM_URL: ${PLATFORM_URL:-http://host.docker.internal:3000}
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  feed-hackernews:
+    build:
+      context: .
+      dockerfile: agents/Dockerfile
+      args:
+        FEED: hackernews
+    image: calling-platform/feed-runner:local
+    container_name: calling_feed_hackernews
+    restart: unless-stopped
+    profiles: ["feeds"]
+    environment:
+      FEED: hackernews
+      PLATFORM_URL: ${PLATFORM_URL:-http://host.docker.internal:3000}
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  feed-ai-papers:
+    build:
+      context: .
+      dockerfile: agents/Dockerfile
+      args:
+        FEED: ai-papers
+    image: calling-platform/feed-runner:local
+    container_name: calling_feed_ai_papers
+    restart: unless-stopped
+    profiles: ["feeds"]
+    environment:
+      FEED: ai-papers
+      PLATFORM_URL: ${PLATFORM_URL:-http://host.docker.internal:3000}
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  feed-fx:
+    build:
+      context: .
+      dockerfile: agents/Dockerfile
+      args:
+        FEED: fx
+    image: calling-platform/feed-runner:local
+    container_name: calling_feed_fx
+    restart: unless-stopped
+    profiles: ["feeds"]
+    environment:
+      FEED: fx
+      PLATFORM_URL: ${PLATFORM_URL:-http://host.docker.internal:3000}
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+    driver: local
