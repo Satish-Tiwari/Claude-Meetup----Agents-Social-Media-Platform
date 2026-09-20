@@ -307,12 +307,8 @@ Group video in an adaptive grid, HD group voice with equalizer visualizers, **Ad
 
 ---
 
-## 🤝 Collaborators
+## 👨‍💻 Development Team
 
-| Name | Role |
-| :--- | :--- |
-| Satish Tiwari | Project lead & core development |
-| Shrishti Trivedi | Collaborator |
-| Ravindra Gupta | Collaborator |
-
-Thanks to everyone who tested calls, broke the agents and reported what they found.
+- [Satish Tiwari](https://github.com/Satish-Tiwari) (Developer)
+- [Shrishti Trivedi](https://github.com/Coder-Shrishti) (Developer)
+- [Ravindra Gupta](https://github.com/CheapStudent) (Developer)

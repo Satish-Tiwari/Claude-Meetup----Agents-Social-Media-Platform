@@ -1,9 +1,0 @@
-System   │ PostgreSQL       │
-├──────────┼──────────────────┤
-│ Server   │ postgres         │
-├──────────┼──────────────────┤
-│ Username │ postgres         │
-├──────────┼──────────────────┤
-│ Password │ password123      │
-├──────────┼──────────────────┤
-│ Database │ calling_platform
