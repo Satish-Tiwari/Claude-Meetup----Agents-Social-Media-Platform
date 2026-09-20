@@ -301,12 +301,6 @@ AGENTS.md                workspace guide for AI coding assistants
 
 ---
 
-## 📹 Calling features (still all here)
-
-Group video in an adaptive grid, HD group voice with equalizer visualizers, **Add / Merge Call** to pull a third person into a live 1:1, screen sharing, floating minimized call widget, synthesized ringtones, and call logs with durations. Test a 3-way call with Alice / Bob / Charlie in three browser windows (mobile via `https://<ip>:3443`).
-
----
-
 ## 👨‍💻 Development Team
 
 - [Satish Tiwari](https://github.com/Satish-Tiwari) (Developer)
